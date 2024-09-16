@@ -1,0 +1,28 @@
+pip install flask
+from flask import Flask, redirect, url_for
+import random
+import string
+import ssl
+
+app = Flask(__name__)
+
+# Generate random string for unique URL
+def generate_random_string(length=10):
+    letters = string.ascii_letters + string.digits
+    return ''.join(random.choice(letters) for i in range(length))
+
+@app.route('/random-link')
+def random_link():
+    random_string = generate_random_string()
+    random_url = f"https://www.xbox.com/en-us/play/{random_string}"
+    return redirect(random_url)
+
+if __name__ == '__main__':
+    # SSL context (you'll need a cert.pem and key.pem)
+    context = ssl.SSLContext(ssl.PROTOCOL_TLS)
+    context.load_cert_chain('cert.pem', 'key.pem')  # Update with your certificate and key paths
+    
+    # Run the Flask app with HTTPS
+    app.run(ssl_context=context, host='0.0.0.0', port=443)
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365
+
